@@ -10,7 +10,5 @@ import com.demo.model.Asset;
 
 @Repository
 public interface AssetRepo extends JpaRepository<Asset,String> {
-//    @Query("select a from Asset a where a.themeAsset.themeName=?1")
-//	List<Asset> findByThemeName(String themeName);
-
+  
 }

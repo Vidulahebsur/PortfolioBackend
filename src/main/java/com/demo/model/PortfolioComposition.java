@@ -11,7 +11,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.demo.service.PortfolioCompositionService;
 @Entity
 public class PortfolioComposition {
 @Id
@@ -27,15 +30,26 @@ private double allocatedValue;
 private double totalTransaction;
 private double availableBalance;
 private double investmentValue;
-
 @ManyToOne(cascade=CascadeType.ALL)
 @JoinColumn(name="portfolioName",referencedColumnName="portfolioName")
 private PortfolioHeader portfolioHeader;
 @ManyToOne
-private Asset asset;
-@ManyToOne
 private Master master;
+@ManyToOne
+private Asset asset;
 
+public Master getMaster() {
+	return master;
+}
+public void setMaster(Master master) {
+	this.master = master;
+}
+public Asset getAsset() {
+	return asset;
+}
+public void setAsset(Asset asset) {
+	this.asset = asset;
+}
 public int getCompositionId() {
 	return compositionId;
 }
@@ -107,18 +121,6 @@ public PortfolioHeader getPortfolioHeader() {
 }
 public void setPortfolioHeader(PortfolioHeader portfolioHeader) {
 	this.portfolioHeader = portfolioHeader;
-}
-public Asset getAsset() {
-	return asset;
-}
-public void setAsset(Asset asset) {
-	this.asset = asset;
-}
-public Master getMaster() {
-	return master;
-}
-public void setMaster(Master master) {
-	this.master = master;
 }
 
 

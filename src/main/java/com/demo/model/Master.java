@@ -2,10 +2,7 @@ package com.demo.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
-
 
 @Entity
 public class Master extends Auditable{
@@ -21,9 +18,10 @@ private String isinNumber;
 private String currency;
 private String country;
 private String lastPrice;
+
 @ManyToOne
-@JoinColumn(name="asset_id")
 private Asset asset;
+
 public Master() {
 	super();
 }

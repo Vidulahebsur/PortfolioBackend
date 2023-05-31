@@ -14,11 +14,11 @@ import org.springframework.stereotype.Service;
 
 import com.demo.model.Asset;
 import com.demo.model.Master;
+import com.demo.model.PortfolioComposition;
 import com.demo.model.Stock;
 import com.demo.repository.AssetRepo;
 import com.demo.repository.MasterRepo;
 import com.demo.repository.StockRepo;
-
 
 
 @Service
@@ -27,14 +27,14 @@ public class MasterService {
       MasterRepo repo;
 	@Autowired
 	StockRepo stockRepo;
-	@Autowired
-	AssetRepo assetRepo;
+   @Autowired
+   AssetRepo assetRepo;
 
 	 	
 	String line="";
 	public void saveMasterData() throws IOException {
 		
-			try(BufferedReader br=new BufferedReader(new FileReader("src/main/resources/NSEDATA.csv"))){
+			try(BufferedReader br=new BufferedReader(new FileReader("src/main/resources/MASTER.csv"))){
 		    while((line=br.readLine())!=null) {
 		    	String [] data=line.split(",");
 		    	Master master=new Master();
@@ -48,15 +48,14 @@ public class MasterService {
 		    	master.setIsinNumber(data[7]);
 		    	master.setCurrency(data[9]);
 		    	master.setCountry(data[10]);
-		    	String assetName=data[11];
-				
-				Asset asset=assetRepo.findById(assetName).orElse(null);
-				if(asset==null) {
-					asset=new Asset();
-					asset.setAssetId(assetName);
-					assetRepo.save(asset);
-				}
-				master.setAsset(asset);
+		    	String assetId=data[11];
+		    	Asset asset=assetRepo.findById(assetId).orElse(null);
+		    	if(asset==null) {
+		        asset=new Asset();	
+		        asset.setAssetId(assetId);
+		        assetRepo.save(asset);
+		    	}
+		    	master.setAsset(asset);
 		    	Stock stock=stockRepo.findBySymbol(master.getSymbol());
 		    	if(stock!=null) {
 		    		master.setLastPrice(stock.getLast());
@@ -72,27 +71,6 @@ public class MasterService {
 			}
 		
 	}
-	public void saveAssetData() {
-		try(BufferedReader br=new BufferedReader(new FileReader("src/main/resources/AssetAllocation.csv")))
-		{
-		while((line=br.readLine())!=null) {
-			String [] data=line.split(",");
-			Asset a=new Asset();
-			a.setAssetId(data[0]);
-			a.setAssetClasses(data[1]);
-			a.setSubAssetClass(data[2]);
-			a.setRisk(data[3]);
-			a.setInvestmentHorizon(data[4]);
-			a.setReturns(data[5]);
-			a.setLiquidity(data[6]);
-			assetRepo.save(a);
-		}
-		}
-		catch(IOException e) {
-			e.printStackTrace();
-		}
-		
-	}
 
 	public Optional<Master> findBySymbol(String symbol) {
 		return repo.findBySymbol( symbol);
@@ -106,13 +84,11 @@ public class MasterService {
 
 		return repo.findBySector(sector);
 	}
-	
+
 	public List<Master> findByDescription(String description) {
 		return repo.findByDescription(description);
 	}
-	public List<Master> findByAssetId(String assetId) {
-		return repo.findByAssetId(assetId);
-	}
+
 	public List<Master> findByIndustry(String industry) {
 		return repo.findByIndustry(industry);
 	}
@@ -169,6 +145,13 @@ public class MasterService {
 		catch (FileNotFoundException f) {
 		   f.printStackTrace();		
 		}
+	}
+
+	
+
+	public List<Master> findByAsset(String assetId) {
+		// TODO Auto-generated method stub
+		return repo.findByAsset(assetId);
 	}
 
 	

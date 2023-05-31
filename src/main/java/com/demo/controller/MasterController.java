@@ -18,9 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.demo.exception.DataNotFoundException;
 import com.demo.model.Master;
-import com.demo.repository.MasterRepo;
+import com.demo.model.PortfolioComposition;
 import com.demo.service.MasterService;
-
 
 @CrossOrigin(origins="*")
 @RestController
@@ -29,8 +28,6 @@ public class MasterController {
 @Autowired
 MasterService service;
 
-@Autowired
-private MasterRepo masterRepo;
   @RequestMapping("/api") 
   public void setMasterData() throws IOException {
   service.saveMasterData();
@@ -62,7 +59,16 @@ private MasterRepo masterRepo;
 			  throw new DataNotFoundException("Given symbol is not available");
 		  }
 		  } 
-			
+	 @GetMapping("/fetchByAsset/{assetId}")
+		public ResponseEntity<List<Master>> findByName(@PathVariable String assetId) {
+			List<Master> object = service.findByAsset(assetId);
+			if (object.isEmpty()) {
+				throw new DataNotFoundException("Given Asset is not available");
+			} else {
+				return new ResponseEntity<>(object, HttpStatus.OK);
+			}
+		}
+		   
 			  @GetMapping("/fetchDataBySector/{sector}") 
 			  public ResponseEntity<List<Master>>findBySector(@PathVariable String sector){ 
 			  List<Master>master=service.findBySector(sector);
@@ -172,18 +178,6 @@ private MasterRepo masterRepo;
 				  return new  ResponseEntity<>(master,HttpStatus.OK);
 				  } 
 			  }
-			  @GetMapping("/getByAssetId/{assetId}") 
-			  public ResponseEntity<List<Master>>findByAsset(@PathVariable String assetId){ 
-			  List<Master>master=service.findByAssetId(assetId);
-			  if(master.isEmpty())
-			  { 
-				  throw new DataNotFoundException("Given ISINNumber is not available"); 
-				  }
-			  else
-			  { 
-				  return new  ResponseEntity<>(master,HttpStatus.OK);
-				  } 
-			  }
 			  @PutMapping("/updateMaster/{symbol}")
 			  public ResponseEntity<Master>updateMaster(@RequestBody Master master, @PathVariable String symbol){
 				  Master object=service.updateMaster(master);
@@ -194,17 +188,7 @@ private MasterRepo masterRepo;
 				  service.deleteMaster(symbol);
 				  return new ResponseEntity<>("Data has been deleted successfully",HttpStatus.OK);
 			  }
-//			  @GetMapping("/getByAssetId/{assetId}")
-//				public ResponseEntity<List<Master>> getByAsset(@PathVariable("assetId") String assetId)
-//				{
-//					List<Master> list=masterRepo.findByAssetId(assetId);
-//					if(list.isEmpty())
-//					{
-//						throw new DataNotFoundException("Asset is not present");
-//					}else {
-//						return new ResponseEntity<>(list,HttpStatus.OK);
-//					}
-//				}
+			  
 			  
 			 
 

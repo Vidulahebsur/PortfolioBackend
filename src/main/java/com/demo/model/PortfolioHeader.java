@@ -5,7 +5,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import com.demo.enums.RebalancingFrequency;
@@ -21,11 +20,8 @@ public class PortfolioHeader{
 	@Enumerated(EnumType.STRING)
 	private RebalancingFrequency rebalancingFrequency;
 	private double investmentValue;
-	@ManyToOne
+	@OneToOne
 	private Theme theme;
-	
-	
-
 
 public Theme getTheme() {
 		return theme;

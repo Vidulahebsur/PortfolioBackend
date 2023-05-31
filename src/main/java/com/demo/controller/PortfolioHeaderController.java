@@ -42,7 +42,7 @@ public class PortfolioHeaderController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Theme");
 		Theme theme = optional.get();
 		portfolioHeader.setTheme(theme);
-		portfolioHeader.setInvestmentTheme(portfolioHeader.getTheme().getThemeName());
+		portfolioHeader.setInvestmentTheme(themeName);
 		service.addPortfolio(portfolioHeader);
 		return new ResponseEntity<>("Portfolio added Successfully!",HttpStatus.OK);
 	}
@@ -66,9 +66,4 @@ public class PortfolioHeaderController {
 		  return new  ResponseEntity<>(object,HttpStatus.OK);
 		  } 
 	  }
-	  @DeleteMapping("/delete/{portfolioName}")
-	  public ResponseEntity<String>delete(@PathVariable String portfolioName){
-		  service.delete(portfolioName);
-		  return new ResponseEntity<>("Data has been deleted successfully",HttpStatus.OK);
 	  }
-}

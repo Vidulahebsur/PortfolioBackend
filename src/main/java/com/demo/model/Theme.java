@@ -10,15 +10,15 @@ import javax.persistence.Id;
 import com.demo.enums.ThemeName;
 @Entity
 public class Theme {
-	@Id
-	private String themeName;
+@Id
+private String themeName;
 
-	public String getThemeName() {
-		return themeName;
-	}
+public String getThemeName() {
+	return themeName;
+}
 
-	public void setThemeName(String themeName) {
-		this.themeName = themeName;
-	}
+public void setThemeName(String themeName) {
+	this.themeName = themeName;
+}
 
 }

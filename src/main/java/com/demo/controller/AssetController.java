@@ -1,5 +1,6 @@
 package com.demo.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,32 +20,27 @@ import com.demo.model.Asset;
 import com.demo.model.Master;
 import com.demo.model.PortfolioComposition;
 import com.demo.model.ThemeAsset;
-import com.demo.repository.AssetRepo;
 import com.demo.repository.ThemeAssetRepo;
 import com.demo.service.AssetService;
-import com.demo.service.MasterService;
-
 
 @RestController
 @RequestMapping("/asset")
 @CrossOrigin(origins="*")
 public class AssetController {
 	@Autowired
-	private AssetRepo assetRepository;
+	AssetService service;
 	@Autowired
-	private AssetService service;
-	@Autowired
-	private MasterService masterService;
+	ThemeAssetRepo themeAssetRepo;
 	
-	@RequestMapping("/fetch")
-	public void setAssetData() {
-		masterService.saveAssetData();
-	}
+	 @RequestMapping("/assetApi") 
+	  public void setAssetData() throws IOException {
+	  service.saveAssetData();
+	  }
+	@PostMapping("/addAsset")
+	public ResponseEntity<String>addAsset(@RequestBody Asset asset ){
+		 service.addAsset(asset); 
+		 return new  ResponseEntity<>("Data has been inserted Successfully",HttpStatus.OK); }
 
-	
-	  @PostMapping("/add") public Asset postAsset(@RequestBody Asset asset) {
-	  asset=assetRepository.save(asset); return asset; }
-  
 
 	@GetMapping("/fetchAsset")
 	public ResponseEntity<List<Asset>>getAll(){
@@ -53,17 +49,5 @@ public class AssetController {
 	}
 	
 	
-//	@GetMapping("/fetchAssetByThemeName/{themeName}")
-//	public ResponseEntity<List<Asset>>findByThemeName(@PathVariable String themeName){ 
-//			  List<Asset>object=service.findByThemeName(themeName);
-//			  if(object.isEmpty())
-//			  { 
-//				  throw new DataNotFoundException("Given themeName is not available"); 
-//				  }
-//			  else
-//			  { 
-//				  return new  ResponseEntity<>(object,HttpStatus.OK);
-//				  } 
-//			  }
-//	}
-}
+	
+	}

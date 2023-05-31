@@ -21,4 +21,8 @@ public ThemeAsset addThemeAsset(ThemeAsset themeAsset) {
 public List<ThemeAsset> fetchThemeAsset() {
 	return repo.findAll();
 }
+
+public List<ThemeAsset> findByAsset(String themeName) {
+	return repo.findByAsset(themeName);
+}
 }

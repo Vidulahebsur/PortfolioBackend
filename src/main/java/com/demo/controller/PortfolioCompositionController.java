@@ -24,6 +24,7 @@ import com.demo.model.Master;
 import com.demo.model.PortfolioComposition;
 import com.demo.model.PortfolioHeader;
 import com.demo.model.ThemeAsset;
+import com.demo.repository.AssetRepo;
 import com.demo.repository.MasterRepo;
 import com.demo.repository.PortfolioCompositionRepo;
 import com.demo.repository.PortfolioHeaderRepo;
@@ -45,11 +46,13 @@ public class PortfolioCompositionController {
 
 	@Autowired
 	MasterRepo masterRepo;
+	@Autowired
+	AssetRepo assetRepo;
 	public static double totalTransaction;
 
-	@PostMapping("/addCompo/{portfolioName}/{symbol}")
+	@PostMapping("/addCompo/{portfolioName}/{assetId}/{symbol}")
 	public ResponseEntity<String> addCompo(@RequestBody PortfolioComposition portfolioComposition,
-			@PathVariable("portfolioName") String portfolioName, @PathVariable("symbol") String symbol) {
+			@PathVariable("portfolioName") String portfolioName,@PathVariable ("assetId") String assetId, @PathVariable("symbol") String symbol) {
 
 		Optional<PortfolioHeader> optional = repo.findById(portfolioName);
 		if (!optional.isPresent())
@@ -58,11 +61,19 @@ public class PortfolioCompositionController {
 		PortfolioHeader portfolioHeader = optional.get();
 		portfolioComposition.setPortfolioHeader(portfolioHeader);
 
+		Optional<Asset> optionalA = assetRepo.findById(assetId);
+		if (!optionalA.isPresent())
+			return new ResponseEntity<>("Invalid Asset", HttpStatus.BAD_REQUEST);
+		Asset asset = optionalA.get();
+		portfolioComposition.setAsset(asset);
+
 		Optional<Master> optionalM = masterRepo.findById(symbol);
 		if (!optionalM.isPresent())
 			return new ResponseEntity<>("Invalid securities", HttpStatus.BAD_REQUEST);
 		Master master = optionalM.get();
+		portfolioComposition.setMaster(master);
 		portfolioComposition.setSecurityName(master.getNameOfCompany());
+		portfolioComposition.setExchangeName(master.getExchange());
 
 		double price = Double.parseDouble(master.getLastPrice());
 		portfolioComposition.setPrice(price);
@@ -70,8 +81,8 @@ public class PortfolioCompositionController {
 		int units = portfolioComposition.getUnits();
 		double allocatedValue = price * units;
 
-		portfolioComposition.setAllocatedValue(allocatedValue);
-		portfolioComposition.setTotalTransaction(allocatedValue);
+		portfolioComposition.setAllocatedValue(Math.round(allocatedValue));
+		portfolioComposition.setTotalTransaction(Math.round(allocatedValue));
 		
 		double investmentValue = portfolioHeader.getInvestmentValue();
 		portfolioComposition.setInvestmentValue(investmentValue);
@@ -129,10 +140,15 @@ public class PortfolioCompositionController {
 		 * double returns=-((returnPer/100)*totalTransaction);
 		 * portfolioComposition.setReturns(returns);
 		 */
-		
+		if(allocatedValue>investmentValue) {
+			return new ResponseEntity<>("you have exceeded your invested Amount,decrease the units",HttpStatus.BAD_REQUEST);
+			
+		}
+		else {
 		service.addCompo(portfolioComposition);
 
 		return ResponseEntity.status(HttpStatus.OK).body("Security added Successfully!");
+	}
 	}
 
 	@GetMapping("/fetchCompo")
@@ -169,10 +185,12 @@ public class PortfolioCompositionController {
 			return new ResponseEntity<>(object, HttpStatus.OK);
 		}
 	}
+	
 	 @DeleteMapping("/delete/{portfolioName}")
 	  public ResponseEntity<String>delete(@PathVariable String portfolioName){
 		  service.delete(portfolioName);
 		  return new ResponseEntity<>("Data has been deleted successfully",HttpStatus.OK);
 	  }
+	
 
 }

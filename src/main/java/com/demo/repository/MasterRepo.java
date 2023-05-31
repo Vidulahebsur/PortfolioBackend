@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import com.demo.model.Master;
+import com.demo.model.PortfolioComposition;
 @Repository
 public interface MasterRepo extends JpaRepository<Master,String>{
 
@@ -33,8 +34,6 @@ public interface MasterRepo extends JpaRepository<Master,String>{
 	public List<Master> findByCurrency(String currency);
     @Query("FROM Master WHERE isinNumber=?1")
 	public List<Master> findByIsinNumber(String isinNumber);
-
     @Query("select m from Master m where m.asset.assetId=?1")
-	public List<Master> findByAssetId(String assetId);
-
+     List<Master> findByAsset(String assetId);
 }
